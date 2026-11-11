@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Terre est plate ? On a vérifié.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2330;
+  background: #f1f3f7;
+}
+
+.cahier { max-width: 1000px; margin: 0 auto; padding: 0 16px 40px; }
+
+h1, h2, h3 { line-height: 1.2; }
+h1 { font-size: 46px; margin: 10px 0 5px; }
+h2 { font-size: 28px; color: #1d2d5c; margin: 0 0 15px; }
+h2 .num { color: #e8590c; margin-right: 8px; }
+h3 { font-size: 20px; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+a { color: #e8590c; }
+
+.main { font-weight: bold; }
+.rouge { color: #c92a2a; }
+.vert { color: #2b8a3e; }
+.fluo { background: #ffe066; padding: 0 3px; }
+.annotation { color: #e8590c; font-weight: bold; }
+
+svg { display: block; width: 100%; height: auto; }
+svg text { font-family: "Caveat", cursive; }
+
+.onglets {
+  position: sticky; top: 0; z-index: 20;
+  background: #1d2d5c;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px;
+  padding: 10px;
+}
+.onglets a { color: white; text-decoration: none; font-weight: bold; font-size: 15px; }
+.onglets a:hover { color: #ffa94d; }
+
+.entete {
+  display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: center;
+  background: #1d2d5c; color: white;
+  margin: 0 -16px 0; padding: 30px 30px 40px;
+}
+.entete h1 { color: white; }
+.entete .main { font-size: 20px; }
+.entete .rouge { color: #ffa94d; }
+.sous-titre { color: #cfd6ec; }
+.etiquette {
+  display: inline-block; background: #e8590c; color: white;
+  font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
+  padding: 3px 10px; border-radius: 4px;
+}
+.entete figure { background: white; border-radius: 10px; padding: 10px; }
+.roles { margin-top: 15px; }
+.roles label { display: block; margin: 6px 0; }
+.roles input {
+  font: inherit; padding: 5px 8px; border: 1px solid #4a5a8f; border-radius: 4px;
+  background: #2a3b70; color: white; width: 180px;
+}
+.roles input::placeholder { color: #9aa6cc; }
+
+section {
+  background: white;
+  border: 1px solid #dde1ea;
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.deux-colonnes { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+
+.postit {
+  background: #fff8db; border-left: 4px solid #f2b705;
+  padding: 12px 15px; margin: 15px 0; font-size: 15px;
+}
+.postit.vert { background: #e6f6ea; border-left-color: #2b8a3e; color: inherit; }
+.postit .main { display: block; margin-bottom: 4px; }
+
+.tableau-score {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  background: #e8eefb; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px;
+  font-weight: bold;
+}
+.tableau-score .chiffre {
+  display: inline-block; min-width: 32px; text-align: center;
+  background: #1d2d5c; color: white; border-radius: 4px; padding: 0 6px;
+}
+.commentaire-match { font-weight: normal; font-style: italic; color: #6b7280; }
+.tampon {
+  color: #c92a2a; border: 3px solid #c92a2a; padding: 0 8px;
+  font-weight: bold; letter-spacing: 2px; display: none;
+}
+.tampon.visible { display: inline-block; }
+
+.cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+
+/* pour retourner les cartes */
+.carte { perspective: 1000px; background: none; border: 0; padding: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.carte-dedans { display: grid; transition: transform .5s; transform-style: preserve-3d; }
+.carte.retournee .carte-dedans { transform: rotateY(180deg); }
+.face {
+  grid-area: 1 / 1;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-radius: 8px; padding: 14px; border: 2px solid;
+  display: flex; flex-direction: column;
+}
+.face.recto { background: #fff4e6; border-color: #ffc078; }
+.face.verso { background: #ebfbee; border-color: #8ce99a; transform: rotateY(180deg); }
+.face .qui { font-size: 12px; font-weight: bold; text-transform: uppercase; color: #d9480f; }
+.face.verso .qui { color: #2b8a3e; }
+.face .numero { float: right; font-weight: bold; color: #6b7280; }
+.face p { font-size: 14px; margin-bottom: 8px; }
+.face svg { max-height: 150px; margin: 6px 0; }
+.face .indice { margin-top: auto; font-size: 14px; font-weight: bold; color: #e8590c; }
+
+.labo { background: #f8f9fc; border: 1px solid #dde1ea; border-radius: 8px; padding: 18px; margin-top: 20px; }
+.labo .consigne { font-style: italic; color: #6b7280; }
+.commandes { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 12px 0; }
+input[type="range"] { width: min(300px, 100%); accent-color: #e8590c; vertical-align: middle; }
+
+.bouton {
+  font: inherit; font-size: 15px; font-weight: bold;
+  background: white; color: #1d2d5c;
+  border: 2px solid #1d2d5c; border-radius: 5px;
+  padding: 6px 14px; cursor: pointer;
+}
+.bouton:hover { background: #e8eefb; }
+.bouton.actif { background: #1d2d5c; color: white; }
+.bouton:disabled { opacity: .6; cursor: default; }
+
+.verdict-labo { font-weight: bold; color: #e8590c; min-height: 3em; }
+.duo-svg { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.legende { font-size: 13px; color: #6b7280; text-align: center; }
+
+#dessin-eratosthene text { paint-order: stroke; stroke: #f2f8fd; stroke-width: 5px; stroke-linejoin: round; }
+
+.calcul input { font: inherit; width: 80px; padding: 3px 6px; border: 1px solid #aab; border-radius: 4px; }
+.calcul output { color: #e8590c; font-weight: bold; }
+
+.dialogue { display: flex; flex-direction: column; gap: 8px; margin: 15px 0; }
+.bulle { max-width: 75%; padding: 8px 14px; border-radius: 16px; font-size: 15px; }
+.bulle .nom { display: block; font-size: 12px; font-weight: bold; opacity: .8; }
+.bulle.c { align-self: flex-start; background: #e9ecef; }
+.bulle.d { align-self: flex-end; background: #1d2d5c; color: white; }
+
+.raisons { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+.raison { border: 1px solid #dde1ea; border-radius: 8px; padding: 14px; }
+.raison svg { max-height: 70px; width: auto; margin-bottom: 6px; }
+.raison h3 { font-size: 17px; color: #1d2d5c; }
+.raison p { font-size: 14px; margin: 0; }
+
+.liste-verif { list-style: none; padding: 0; }
+.liste-verif li { margin: 8px 0; }
+.liste-verif label { display: flex; gap: 10px; cursor: pointer; }
+.liste-verif input { width: 18px; height: 18px; flex: none; margin-top: 3px; accent-color: #2b8a3e; }
+.liste-verif input:checked + span { color: #6b7280; text-decoration: line-through; }
+.jauge { height: 14px; background: #e9ecef; border-radius: 7px; overflow: hidden; max-width: 400px; }
+.jauge div { height: 100%; width: 0; background: #2b8a3e; transition: width .3s; }
+
+.question { margin: 20px 0; }
+.question .intitule { font-weight: bold; }
+.choix { display: flex; flex-wrap: wrap; gap: 8px; }
+.choix .bon { background: #d3f9d8; border-color: #2b8a3e; color: #2b8a3e; }
+.choix .faux { background: #ffe3e3; border-color: #c92a2a; color: #c92a2a; }
+.retour { font-size: 15px; margin-top: 6px; min-height: 1.4em; }
+.resultat-quiz { display: none; background: #1d2d5c; color: white; font-weight: bold; padding: 15px 20px; border-radius: 8px; font-size: 18px; }
+
+.sources { font-size: 14px; color: #444; }
+.signature { text-align: center; color: #6b7280; font-size: 14px; margin-top: 30px; }
+
+/* telephone */
+@media (max-width: 720px) {
+  h1 { font-size: 36px; }
+  h2 { font-size: 23px; }
+  .entete, .deux-colonnes, .duo-svg { grid-template-columns: 1fr; }
+  .entete { padding: 24px 18px 30px; }
+  section { padding: 18px 14px; }
+  .bulle { max-width: 90%; }
+}
+</style>
+</head>
+<body>
+
+<nav class="onglets">
+  <a href="#theorie">La théorie</a>
+  <a href="#match">Le match</a>
+  <a href="#labo">Le labo</a>
+  <a href="#dialogue">Le dialogue</a>
+  <a href="#pourquoi">Pourquoi on y croit</a>
+  <a href="#quiz">Le quiz</a>
+</nav>
+
+<main class="cahier">
+
+  <header class="entete">
+    <div>
+      <span class="etiquette">Projet EMC · 1re</span>
+      <h1>La Terre est plate&nbsp;?</h1>
+      <p class="main">On a vérifié. <span class="rouge">(Spoiler&nbsp;: non.)</span></p>
+      <p class="sous-titre">
+        Des gens très sérieux pensent que la Terre est un grand disque, entouré d’un mur de glace,
+        et que la NASA nous ment depuis 1958. On a pris leurs meilleurs arguments, un peu de physique,
+        quelques bâtons plantés dans le sol, et on a regardé ce qui tenait debout.
+      </p>
+      <div class="roles">
+        <label>Le/la conspirationniste&nbsp;: <input id="nom-conspi" placeholder="Adam" maxlength="20"></label>
+        <label>Le/la décodeur·se&nbsp;: <input id="nom-decodeur" placeholder="AdamClone" maxlength="20"></label>
+      </div>
+    </div>
+
+    <figure style="margin:0">
+      <svg viewBox="0 0 520 330" role="img" aria-label="Dessin d'une Terre plate sous un dôme, avec un chat qui pousse un bateau dans le vide">
+        <path d="M70 200 A190 160 0 0 1 450 200" fill="#dcebf8" fill-opacity=".55" stroke="#1f3a93" stroke-width="2" stroke-dasharray="7 6"/>
+        <circle cx="205" cy="105" r="15" fill="#f7c948" stroke="#c98a00" stroke-width="2"/>
+        <g stroke="#c98a00" stroke-width="2" stroke-linecap="round">
+          <path d="M205 82v-8M205 128v8M182 105h-8M228 105h8M189 89l-5-5M221 121l5 5M221 89l5-5M189 121l-5 5"/>
+        </g>
+        <circle cx="325" cy="95" r="11" fill="#f1f1ea" stroke="#888" stroke-width="2"/>
+        <circle cx="321" cy="92" r="2" fill="#ccc"/><circle cx="328" cy="99" r="1.6" fill="#ccc"/>
+        <path d="M70 200 L70 228 A190 56 0 0 0 450 228 L450 200" fill="#9b7650" stroke="#3b2a1a" stroke-width="2"/>
+        <path d="M95 236 q40 12 90 15 M260 258 q60 -2 120 -16" stroke="#6b4e31" stroke-width="1.5" fill="none"/>
+        <ellipse cx="260" cy="200" rx="190" ry="56" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+        <ellipse cx="260" cy="200" rx="181" ry="50" fill="none" stroke="#fff" stroke-width="8"/>
+        <path d="M232 190 q22 -16 48 -6 q16 10 -4 20 q-28 9 -44 -14z" fill="#8bbf6a" stroke="#3d6b2a" stroke-width="1.5"/>
+        <path d="M150 196 q14 -14 34 -8 q8 12 -6 22 q-22 4 -28 -14z" fill="#8bbf6a" stroke="#3d6b2a" stroke-width="1.5"/>
+        <path d="M320 205 q18 -8 36 2 q4 14 -12 18 q-20 0 -24 -20z" fill="#d9b86a" stroke="#8a6a2a" stroke-width="1.5"/>
+        <path d="M200 222 q10 -6 20 2 q-2 10 -14 8z" fill="#8bbf6a" stroke="#3d6b2a" stroke-width="1.5"/>
+        <path d="M448 214 q8 20 4 60 M441 222 q6 18 2 50" stroke="#79b0e0" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g transform="translate(408 160)">
+          <path d="M2 34 q-6 -30 14 -34 q20 4 14 34z" fill="#2b2b2b"/>
+          <circle cx="16" cy="-2" r="11" fill="#2b2b2b"/>
+          <path d="M7 -8 l1 -12 l8 8z M25 -8 l-1 -12 l-8 8z" fill="#2b2b2b"/>
+          <circle cx="12" cy="-3" r="2" fill="#ffd34d"/><circle cx="20" cy="-3" r="2" fill="#ffd34d"/>
+          <path d="M0 30 q-18 2 -16 -18" stroke="#2b2b2b" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M26 18 l18 6" stroke="#2b2b2b" stroke-width="5" stroke-linecap="round"/>
+        </g>
+        <g transform="translate(482 268) rotate(38)">
+          <path d="M-16 -6 h32 l-5 7 h-22z" fill="#8a5a2b" stroke="#3b2a1a" stroke-width="1.5"/>
+          <path d="M0 -6 v-22 l12 18 h-12" fill="#fff" stroke="#333" stroke-width="1.5"/>
+        </g>
+        <text x="10" y="300" font-size="22" fill="#c8302b">le mur de glace (gardé par la NASA, paraît-il)</text>
+        <path d="M120 284 q30 -30 60 -46" stroke="#c8302b" stroke-width="1.8" fill="none" marker-end="url(#fleche)"/>
+        <text x="350" y="40" font-size="21" fill="#1f3a93">le « dôme »</text>
+        <path d="M380 46 q-10 22 -24 40" stroke="#1f3a93" stroke-width="1.8" fill="none" marker-end="url(#fleche-bleue)"/>
+        <defs>
+          <marker id="fleche" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10" fill="none" stroke="#c8302b" stroke-width="2"/></marker>
+          <marker id="fleche-bleue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10" fill="none" stroke="#1f3a93" stroke-width="2"/></marker>
+          <marker id="fleche-verte" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10" fill="none" stroke="#2f7d4f" stroke-width="2"/></marker>
+        </defs>
+      </svg>
+    </figure>
+  </header>
+
+
+  <!-- theorie -->
+  <section id="theorie">
+    <h2><span class="num">1.</span>Bon, c’est quoi exactement cette théorie&nbsp;?</h2>
+
+    <div class="deux-colonnes">
+      <div>
+        <p>
+          Pour les « platistes », la Terre n’est pas une boule mais un <span class="fluo">disque</span>.
+          Le pôle Nord est au milieu. L’Antarctique n’est pas un continent, c’est un immense
+          mur de glace qui fait le tour du disque pour retenir les océans (pratique).
+        </p>
+        <p>
+          Le Soleil et la Lune sont petits, proches, et tournent en rond au-dessus de nos têtes comme
+          des lampes de bureau. Le tout est recouvert d’un dôme, le « firmament ».
+        </p>
+        <p>
+          Et pourquoi on ne nous l’a jamais dit&nbsp;? Parce que la NASA, les gouvernements, les pilotes,
+          les profs de SVT et probablement ta voisine sont dans le coup.
+        </p>
+        <div class="postit">
+          <span class="main">Le saviez-vous&nbsp;?</span>
+          L’idée revient en force vers 2015 grâce à YouTube. En 2017, un sondage YouGov aux États-Unis
+          trouvait qu’environ un jeune de 18-24 ans sur six n’était pas sûr que la Terre soit ronde.
+          On n’est pas là pour se moquer, on est là pour comprendre.
+        </div>
+      </div>
+
+      <figure style="margin:0">
+        <svg viewBox="0 0 340 340" role="img" aria-label="Carte de la Terre plate vue de dessus, pôle Nord au centre">
+          <circle cx="170" cy="170" r="150" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+          <circle cx="170" cy="170" r="142" fill="none" stroke="#fff" stroke-width="14"/>
+          <circle cx="170" cy="170" r="142" fill="none" stroke="#b9d7ef" stroke-width="2" stroke-dasharray="3 5"/>
+          <path d="M150 120 q25 -30 60 -10 q20 20 6 45 q-20 10 -40 -5 q-30 -5 -26 -30z" fill="#8bbf6a" stroke="#3d6b2a" stroke-width="1.5"/>
+          <path d="M95 120 q-10 -25 15 -40 q30 -5 30 20 q-10 30 -45 20z" fill="#8bbf6a" stroke="#3d6b2a" stroke-width="1.5"/>
+          <path d="M90 140 q-30 30 -20 70 q20 25 35 -5 q5 -40 -15 -65z" fill="#8bbf6a" stroke="#3d6b2a" stroke-width="1.5"/>
+          <path d="M215 170 q30 10 30 45 q-10 35 -30 25 q-15 -30 0 -70z" fill="#d9b86a" stroke="#8a6a2a" stroke-width="1.5"/>
+          <path d="M250 110 q30 10 25 40 q-20 10 -30 -10z" fill="#8bbf6a" stroke="#3d6b2a" stroke-width="1.5"/>
+          <path d="M120 250 q20 -10 40 5 q-5 20 -30 15z" fill="#d9b86a" stroke="#8a6a2a" stroke-width="1.5"/>
+          <circle cx="170" cy="170" r="4" fill="#c8302b"/>
+          <text x="178" y="168" font-size="17" fill="#c8302b">pôle Nord</text>
+          <circle cx="170" cy="170" r="88" fill="none" stroke="#c98a00" stroke-width="1.6" stroke-dasharray="4 6"/>
+          <circle cx="258" cy="170" r="10" fill="#f7c948" stroke="#c98a00" stroke-width="2"/>
+          <path d="M240 228 a88 88 0 0 0 30 -40" stroke="#c98a00" stroke-width="2" fill="none" marker-end="url(#fleche)"/>
+          <text x="12" y="20" font-size="19" fill="#1f3a93">Antarctique = mur tout autour</text>
+          <path d="M60 26 q-20 20 -10 50" stroke="#1f3a93" stroke-width="1.6" fill="none" marker-end="url(#fleche-bleue)"/>
+          <text x="216" y="330" font-size="19" fill="#c98a00">le Soleil-lampe</text>
+        </svg>
+        <figcaption class="legende">La carte des platistes. Remarque&nbsp;: l’Australie est devenue énorme. On y reviendra.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+
+  <!-- les 6 cartes -->
+  <section id="match">
+    <h2><span class="num">2.</span>Le match&nbsp;: arguments contre contre-arguments</h2>
+    <p>
+      À gauche de chaque carte, ce que dit <strong class="nom-conspi">Adam</strong>.
+      <strong>Clique sur une carte pour la retourner</strong> et voir la réponse de
+      <strong class="nom-decodeur">AdamClone</strong>.
+    </p>
+
+    <div class="tableau-score" aria-live="polite">
+      <span><span class="nom-conspi">Adam</span> <span class="chiffre" id="score-c">6</span></span>
+      <span>contre</span>
+      <span><span class="nom-decodeur">AdamClone</span> <span class="chiffre" id="score-d">0</span></span>
+      <span class="commentaire-match" id="commentaire-match">Coup d’envoi. Pour l’instant, personne n’a rien prouvé.</span>
+      <span class="tampon" id="tampon">RÉFUTÉ</span>
+    </div>
+
+    <div class="cartes">
+
+      <button class="carte" type="button">
+        <div class="carte-dedans">
+          <div class="face recto">
+            <span class="numero">#1</span>
+            <span class="qui">« Argument »</span>
+            <h3>Si la Terre était ronde, l’eau tomberait</h3>
+            <svg viewBox="0 0 200 130">
+              <circle cx="100" cy="58" r="42" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+              <path d="M80 30 q10 -8 22 0 q4 10 -8 12 q-14 0 -14 -12z" fill="#8bbf6a"/>
+              <g fill="#79b0e0" stroke="#1f3a93" stroke-width="1.2">
+                <path d="M86 108 q4 -8 4 0 a4 4 0 0 1 -8 0 q0 -4 4 -8z" transform="translate(0 4)"/>
+                <path d="M104 116 q4 -8 4 0 a4 4 0 0 1 -8 0 q0 -4 4 -8z"/>
+                <path d="M118 106 q4 -8 4 0 a4 4 0 0 1 -8 0 q0 -4 4 -8z" transform="translate(0 8)"/>
+              </g>
+              <text x="132" y="122" font-size="18" fill="#c8302b">au secours</text>
+            </svg>
+            <p>« Les Australiens ont la tête en bas, et l’océan reste collé à la planète&nbsp;? Allez. »</p>
+            <span class="indice">Retourner →</span>
+          </div>
+          <div class="face verso">
+            <span class="numero">#1</span>
+            <span class="qui">Réponse</span>
+            <h3>« En bas », c’est vers le centre</h3>
+            <svg viewBox="0 0 200 130">
+              <circle cx="100" cy="65" r="38" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+              <use href="#bonhomme" transform="translate(100 65) rotate(0) translate(0 -38)"/>
+              <use href="#bonhomme" transform="translate(100 65) rotate(90) translate(0 -38)"/>
+              <use href="#bonhomme" transform="translate(100 65) rotate(180) translate(0 -38)"/>
+              <use href="#bonhomme" transform="translate(100 65) rotate(270) translate(0 -38)"/>
+              <g stroke="#2f7d4f" stroke-width="2" fill="none" marker-end="url(#fleche-verte)">
+                <path d="M100 38 v18"/><path d="M127 65 h-18"/><path d="M100 92 v-18"/><path d="M73 65 h18"/>
+              </g>
+              <text x="150" y="30" font-size="17" fill="#2f7d4f">tout le monde</text>
+              <text x="150" y="46" font-size="17" fill="#2f7d4f">est « debout »</text>
+            </svg>
+            <p>La gravité attire tout vers le centre de la Terre. Pour un Australien, le bas est sous ses pieds, exactement comme pour toi. L’eau ne « tombe » pas de la Terre, elle tombe <em>sur</em> la Terre.</p>
+            <p><strong>Et les Australiens ne tiennent pas avec du scotch.</strong></p>
+          </div>
+        </div>
+      </button>
+
+      <button class="carte" type="button">
+        <div class="carte-dedans">
+          <div class="face recto">
+            <span class="numero">#2</span>
+            <span class="qui">« Argument »</span>
+            <h3>Les trajets d’avion sont incohérents</h3>
+            <svg viewBox="0 0 200 120">
+              <rect x="10" y="10" width="180" height="100" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+              <path d="M30 30 q20 -10 40 5 q-5 25 -30 25 q-15 -10 -10 -30z" fill="#8bbf6a"/>
+              <path d="M110 25 q40 -5 55 15 q-10 20 -40 15 q-20 -10 -15 -30z" fill="#8bbf6a"/>
+              <circle cx="52" cy="48" r="3" fill="#c8302b"/><circle cx="140" cy="45" r="3" fill="#c8302b"/>
+              <path d="M52 48 Q96 -8 140 45" stroke="#c8302b" stroke-width="2" stroke-dasharray="5 4" fill="none"/>
+              <text x="62" y="98" font-size="17" fill="#c8302b">pourquoi ce détour ??</text>
+            </svg>
+            <p>« Un Paris-Los Angeles passe au-dessus du Groenland. Sur la carte, c’est absurde. »</p>
+            <span class="indice">Retourner →</span>
+          </div>
+          <div class="face verso">
+            <span class="numero">#2</span>
+            <span class="qui">Réponse</span>
+            <h3>Le plus court sur une boule</h3>
+            <svg viewBox="0 0 200 120">
+              <circle cx="100" cy="62" r="50" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+              <ellipse cx="100" cy="62" rx="50" ry="14" fill="none" stroke="#1f3a93" stroke-width=".8" stroke-dasharray="3 3"/>
+              <path d="M70 70 q-6 -18 10 -26 q14 4 8 22z" fill="#8bbf6a"/>
+              <path d="M112 40 q16 -8 26 6 q-4 14 -18 10z" fill="#8bbf6a"/>
+              <circle cx="80" cy="58" r="3" fill="#2f7d4f"/><circle cx="128" cy="48" r="3" fill="#2f7d4f"/>
+              <path d="M80 58 Q100 28 128 48" stroke="#2f7d4f" stroke-width="2.4" fill="none"/>
+              <text x="140" y="110" font-size="16" fill="#2f7d4f">tout droit !</text>
+            </svg>
+            <p>Sur un globe, le chemin le plus court entre deux villes est un « grand cercle ». Une fois aplati sur une carte, il a l’air tordu. Fais le test&nbsp;: tends une ficelle sur un ballon entre Paris et Los Angeles. Elle passe par le Groenland.</p>
+            <p><strong>Le détour, c’est la carte qui le fait, pas l’avion.</strong> (Et le vrai problème, c’est pour la carte plate&nbsp;: <a href="#avions">voir le labo</a>.)</p>
+          </div>
+        </div>
+      </button>
+
+      <button class="carte" type="button">
+        <div class="carte-dedans">
+          <div class="face recto">
+            <span class="numero">#3</span>
+            <span class="qui">« Argument »</span>
+            <h3>L’expérience du laser</h3>
+            <svg viewBox="0 0 200 110">
+              <rect x="0" y="62" width="200" height="48" fill="#79b0e0"/>
+              <path d="M0 62 h200" stroke="#1f3a93" stroke-width="2"/>
+              <rect x="8" y="44" width="16" height="10" fill="#555"/><path d="M16 54v8" stroke="#555" stroke-width="2"/>
+              <path d="M24 49 H180" stroke="#e02020" stroke-width="2.5"/>
+              <use href="#bonhomme" transform="translate(186 62)"/>
+              <text x="40" y="34" font-size="17" fill="#c8302b">je le vois à 10 km !</text>
+            </svg>
+            <p>« Des gens ont pointé un laser au ras d’un lac et l’ont vu de l’autre côté. Sur une boule, il devrait disparaître derrière la courbure. »</p>
+            <span class="indice">Retourner →</span>
+          </div>
+          <div class="face verso">
+            <span class="numero">#3</span>
+            <span class="qui">Réponse</span>
+            <h3>L’air plie la lumière</h3>
+            <svg viewBox="0 0 200 110">
+              <path d="M0 80 Q100 50 200 80 V110 H0Z" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+              <rect x="8" y="58" width="16" height="10" fill="#555"/>
+              <path d="M24 63 Q100 36 180 62" stroke="#e02020" stroke-width="2.5" fill="none"/>
+              <path d="M24 63 L190 50" stroke="#e02020" stroke-width="1" stroke-dasharray="3 4" fill="none" opacity=".6"/>
+              <text x="38" y="22" font-size="16" fill="#2f7d4f">air froid sur l’eau =</text>
+              <text x="38" y="38" font-size="16" fill="#2f7d4f">le rayon se courbe</text>
+            </svg>
+            <p>Au-dessus d’un lac, l’air froid près de l’eau courbe la lumière, comme un mirage. Le rayon « suit » un peu la courbure.</p>
+            <p>En 1870, le naturaliste Alfred Wallace refait l’expérience en plaçant ses repères en hauteur pour éviter ce piège. Résultat&nbsp;: la courbure apparaît. Il gagne un pari de 500 livres contre un platiste… qui refuse de payer. <strong>Classique.</strong></p>
+          </div>
+        </div>
+      </button>
+
+      <button class="carte" type="button">
+        <div class="carte-dedans">
+          <div class="face recto">
+            <span class="numero">#4</span>
+            <span class="qui">« Argument »</span>
+            <h3>On ne sent pas la Terre tourner</h3>
+            <svg viewBox="0 0 200 110">
+              <path d="M0 92 h200" stroke="#333" stroke-width="2"/>
+              <use href="#bonhomme" transform="translate(100 92) scale(1.6)"/>
+              <text x="118" y="40" font-size="18" fill="#c8302b">1 100 km/h ?</text>
+              <text x="118" y="58" font-size="18" fill="#c8302b">mon œil.</text>
+            </svg>
+            <p>« Si on tournait à cette vitesse, on serait éjectés, on aurait le tournis, les cheveux en arrière. »</p>
+            <span class="indice">Retourner →</span>
+          </div>
+          <div class="face verso">
+            <span class="numero">#4</span>
+            <span class="qui">Réponse</span>
+            <h3>On sent les à-coups, pas la vitesse</h3>
+            <svg viewBox="0 0 200 110">
+              <path d="M6 90 h188" stroke="#333" stroke-width="2"/>
+              <path d="M14 86 h150 q26 0 30 -22 q-4 -26 -40 -26 h-140z" fill="#f2f2f2" stroke="#333" stroke-width="2"/>
+              <path d="M14 56 h176" stroke="#c8302b" stroke-width="3"/>
+              <rect x="30" y="44" width="22" height="10" fill="#9cc" stroke="#333"/><rect x="62" y="44" width="22" height="10" fill="#9cc" stroke="#333"/><rect x="94" y="44" width="22" height="10" fill="#9cc" stroke="#333"/>
+              <path d="M120 44 h10 v10 h-10z" fill="#fff" stroke="#333"/>
+              <circle cx="40" cy="90" r="4" fill="#333"/><circle cx="140" cy="90" r="4" fill="#333"/>
+              <text x="20" y="24" font-size="17" fill="#2f7d4f">300 km/h, et le café ne bouge pas</text>
+            </svg>
+            <p>Dans un TGV à 300 km/h, ton verre ne se renverse pas. Tu ne sens que les freinages et les virages. La Terre tourne à vitesse constante, sans freiner, sans virage serré&nbsp;: rien à sentir.</p>
+            <p>Bonus&nbsp;: dans le documentaire <em>Behind the Curve</em> (2018), des platistes achètent un gyroscope à 20 000 dollars pour prouver que la Terre ne tourne pas. Il mesure une rotation de 15° par heure. Soit pile la rotation de la Terre. <strong>Oups.</strong></p>
+          </div>
+        </div>
+      </button>
+
+      <button class="carte" type="button">
+        <div class="carte-dedans">
+          <div class="face recto">
+            <span class="numero">#5</span>
+            <span class="qui">« Argument »</span>
+            <h3>Les photos de la NASA sont truquées</h3>
+            <svg viewBox="0 0 200 110">
+              <rect x="50" y="20" width="100" height="74" fill="#111" stroke="#333" stroke-width="2"/>
+              <circle cx="100" cy="57" r="26" fill="#79b0e0"/>
+              <path d="M88 46 q10 -8 20 0 q2 12 -10 12z" fill="#8bbf6a"/>
+              <g transform="rotate(-14 100 57)">
+                <rect x="58" y="44" width="84" height="26" fill="none" stroke="#c8302b" stroke-width="3"/>
+                <text x="66" y="65" font-size="24" fill="#c8302b" font-weight="700">PHOTOSHOP</text>
+              </g>
+            </svg>
+            <p>« Toutes les photos de la Terre vue de l’espace viennent de la NASA. Et la NASA ment. »</p>
+            <span class="indice">Retourner →</span>
+          </div>
+          <div class="face verso">
+            <span class="numero">#5</span>
+            <span class="qui">Réponse</span>
+            <h3>Pas besoin de la NASA</h3>
+            <svg viewBox="0 0 200 120">
+              <circle cx="60" cy="34" r="22" fill="#f6c9c3" stroke="#c8302b" stroke-width="2"/>
+              <path d="M60 56 v26" stroke="#555" stroke-width="1.5"/>
+              <rect x="52" y="82" width="16" height="12" rx="2" fill="#333"/>
+              <rect x="100" y="30" width="90" height="66" fill="#0d1b3d" stroke="#333" stroke-width="2"/>
+              <path d="M100 96 V74 Q145 54 190 74 V96z" fill="#79b0e0"/>
+              <path d="M100 74 Q145 54 190 74" stroke="#cfe6ff" stroke-width="3" fill="none"/>
+              <text x="104" y="22" font-size="16" fill="#2f7d4f">la photo de la GoPro</text>
+            </svg>
+            <p>Des lycéens, des clubs d’astronomie, des youtubeurs envoient des ballons-sondes avec une petite caméra à 30 km d’altitude. Sur leurs vidéos, l’horizon est courbé. Pas d’astronaute, juste de l’hélium.</p>
+            <p>Et les Grecs savaient que la Terre était ronde 2 000 ans avant que la NASA existe. <strong>Le complot serait très, très en avance.</strong></p>
+          </div>
+        </div>
+      </button>
+
+      <button class="carte" type="button">
+        <div class="carte-dedans">
+          <div class="face recto">
+            <span class="numero">#6</span>
+            <span class="qui">« Argument »</span>
+            <h3>L’horizon est tout plat</h3>
+            <svg viewBox="0 0 200 110">
+              <rect x="0" y="0" width="200" height="60" fill="#e6f1fb"/>
+              <rect x="0" y="60" width="200" height="50" fill="#79b0e0"/>
+              <path d="M0 60 h200" stroke="#1f3a93" stroke-width="2"/>
+              <path d="M30 20 h50" stroke="#c8302b" stroke-width="2" stroke-dasharray="4 3"/>
+              <text x="86" y="26" font-size="18" fill="#c8302b">règle : c’est droit.</text>
+            </svg>
+            <p>« Regarde la mer. L’horizon est parfaitement droit. Où est la fameuse courbure&nbsp;? »</p>
+            <span class="indice">Retourner →</span>
+          </div>
+          <div class="face verso">
+            <span class="numero">#6</span>
+            <span class="qui">Réponse</span>
+            <h3>Toi, tu es une fourmi</h3>
+            <svg viewBox="0 0 200 110">
+              <path d="M-40 160 A160 160 0 0 1 240 160" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+              <circle cx="100" cy="3" r="1.6" fill="#222"/>
+              <path d="M104 6 q20 6 26 18" stroke="#2f7d4f" stroke-width="1.5" fill="none"/>
+              <text x="118" y="38" font-size="17" fill="#2f7d4f">toi (à l’échelle, c’est pire)</text>
+            </svg>
+            <p>La Terre fait 6&nbsp;371 km de rayon. Debout sur la plage, tes yeux sont à 1,70 m&nbsp;: tu vois à peine à 4,7 km. Sur un morceau si petit d’une boule si grande, la courbure est minuscule.</p>
+            <p>Une fourmi sur un ballon de basket trouve aussi le ballon plutôt plat. <strong>Prends de l’altitude, et la courbe arrive.</strong></p>
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <!-- bonhomme et bateau reutilises dans les dessins -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <g id="bonhomme" stroke="#222" stroke-width="1.6" fill="none" stroke-linecap="round">
+          <circle cx="0" cy="-19" r="4" fill="#fff"/>
+          <path d="M0 -15 v8 M0 -7 l-4 7 M0 -7 l4 7 M-5 -12 l5 2 l5 -2"/>
+        </g>
+        <g id="bateau">
+          <path d="M-30 -12 H30 L22 0 H-22Z" fill="#8a5a2b" stroke="#3b2a1a" stroke-width="2"/>
+          <path d="M-18 -8 h4 M-6 -8 h4 M6 -8 h4" stroke="#f3d39a" stroke-width="2"/>
+          <path d="M0 -12 V-64" stroke="#3b2a1a" stroke-width="2.4"/>
+          <path d="M3 -60 V-16 H28Z" fill="#fff" stroke="#333" stroke-width="1.5"/>
+          <path d="M-3 -58 V-18 H-24Z" fill="#fff" stroke="#333" stroke-width="1.5"/>
+          <path d="M0 -64 l12 4 l-12 4z" fill="#c8302b"/>
+        </g>
+      </defs>
+    </svg>
+  </section>
+
+
+  <!-- labo -->
+  <section id="labo">
+    <h2><span class="num">3.</span>Le labo&nbsp;: teste par toi-même</h2>
+    <p>
+      Le meilleur réflexe face à une théorie, c’est de ne croire personne sur parole. Ni le conspi, ni nous.
+      Alors voilà quatre expériences. Tu bouges, tu regardes, tu juges.
+    </p>
+
+    <div class="labo" id="horizon">
+      <h3>A. Le bateau qui disparaît par le bas</h3>
+      <p class="consigne">Éloigne le bateau. Puis essaie la longue-vue.</p>
+      <div class="commandes">
+        <button class="bouton actif" type="button" data-forme="ronde">Terre ronde</button>
+        <button class="bouton" type="button" data-forme="plate">Terre plate</button>
+        <label>Distance <input type="range" id="distance-bateau" min="0" max="100" value="10"></label>
+        <button class="bouton" type="button" id="longue-vue">Longue-vue&nbsp;: non</button>
+      </div>
+      <div class="duo-svg">
+        <figure style="margin:0">
+          <svg viewBox="0 0 600 240" id="vue-cote">
+            <rect width="600" height="240" fill="#f2f8fd"/>
+            <g id="cote-ronde">
+              <circle cx="300" cy="1050" r="950" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+              <line id="ligne-vue" stroke="#c8302b" stroke-width="1.6" stroke-dasharray="6 5"/>
+            </g>
+            <g id="cote-plate" style="display:none">
+              <rect x="0" y="100" width="600" height="140" fill="#79b0e0"/>
+              <path d="M0 100 H600" stroke="#1f3a93" stroke-width="2"/>
+            </g>
+            <g id="observateur"><use href="#bonhomme" transform="scale(1.3)"/></g>
+            <g id="bateau-cote"><use href="#bateau" transform="scale(.55)"/></g>
+            <text x="12" y="28" font-size="22" fill="#1f3a93">vu de côté</text>
+          </svg>
+          <figcaption class="legende">La ligne rouge, c’est ce que ton œil peut voir. En dessous, c’est caché.</figcaption>
+        </figure>
+        <figure style="margin:0">
+          <svg viewBox="0 0 400 240" id="vue-oeil">
+            <defs>
+              <clipPath id="au-dessus-horizon"><rect x="0" y="0" width="400" height="150"/></clipPath>
+            </defs>
+            <rect width="400" height="150" fill="#e6f1fb"/>
+            <rect y="150" width="400" height="90" fill="#79b0e0"/>
+            <path d="M0 150 H400" stroke="#1f3a93" stroke-width="2"/>
+            <g clip-path="url(#au-dessus-horizon)">
+              <g id="bateau-oeil"><use href="#bateau"/></g>
+            </g>
+            <circle id="cache-longue-vue" cx="200" cy="120" r="300" fill="none" stroke="#111" stroke-width="0"/>
+            <text x="12" y="28" font-size="22" fill="#1f3a93">ce que tu vois</text>
+          </svg>
+          <figcaption class="legende">Depuis la plage, avec tes yeux (ou ta longue-vue).</figcaption>
+        </figure>
+      </div>
+      <p class="verdict-labo" id="verdict-bateau"></p>
+    </div>
+
+    <div class="labo" id="eclipse">
+      <h3>B. L’ombre de la Terre sur la Lune</h3>
+      <p>
+        Pendant une éclipse de Lune, la Terre passe entre le Soleil et la Lune. Son ombre se projette sur la Lune.
+        Vers 350 avant J.-C., Aristote remarque déjà que cette ombre est <strong>toujours un arc de cercle</strong>.
+      </p>
+      <p class="consigne">Change l’angle de la Terre et compare les deux ombres.</p>
+      <div class="commandes">
+        <label>Angle de la Terre <input type="range" id="angle-eclipse" min="0" max="90" value="0"> <span id="angle-eclipse-val">0°</span></label>
+      </div>
+      <div class="duo-svg">
+        <figure style="margin:0">
+          <svg viewBox="0 0 220 200">
+            <defs><clipPath id="lune-1"><circle cx="120" cy="100" r="70"/></clipPath></defs>
+            <rect width="220" height="200" fill="#0d1b3d" rx="6"/>
+            <circle cx="120" cy="100" r="70" fill="#e9e4d0"/>
+            <circle cx="98" cy="80" r="9" fill="#d6cfb4"/><circle cx="140" cy="120" r="13" fill="#d6cfb4"/><circle cx="150" cy="70" r="6" fill="#d6cfb4"/>
+            <circle cx="40" cy="100" r="92" fill="#5a2a1a" fill-opacity=".88" clip-path="url(#lune-1)"/>
+            <text x="10" y="190" font-size="20" fill="#cfe6ff">si la Terre est une boule</text>
+          </svg>
+        </figure>
+        <figure style="margin:0">
+          <svg viewBox="0 0 220 200">
+            <defs><clipPath id="lune-2"><circle cx="120" cy="100" r="70"/></clipPath></defs>
+            <rect width="220" height="200" fill="#0d1b3d" rx="6"/>
+            <circle cx="120" cy="100" r="70" fill="#e9e4d0"/>
+            <circle cx="98" cy="80" r="9" fill="#d6cfb4"/><circle cx="140" cy="120" r="13" fill="#d6cfb4"/><circle cx="150" cy="70" r="6" fill="#d6cfb4"/>
+            <ellipse id="ombre-disque" cx="40" cy="100" rx="92" ry="92" fill="#5a2a1a" fill-opacity=".88" clip-path="url(#lune-2)"/>
+            <text x="10" y="190" font-size="20" fill="#cfe6ff">si la Terre est un disque</text>
+          </svg>
+        </figure>
+      </div>
+      <p class="verdict-labo" id="verdict-eclipse"></p>
+    </div>
+
+    <div class="labo" id="eratosthene">
+      <h3>C. Deux bâtons, une ombre, la taille de la Terre</h3>
+      <p>
+        Vers 240 avant J.-C., Ératosthène, bibliothécaire à Alexandrie, apprend qu’à Syène (aujourd’hui Assouan),
+        le 21 juin à midi, le Soleil éclaire le fond des puits&nbsp;: aucune ombre. Le même jour, à la même heure,
+        un bâton planté à Alexandrie fait une ombre. Comment c’est possible&nbsp;?
+      </p>
+      <div class="commandes">
+        <button class="bouton actif" type="button" data-sol="ronde">Terre ronde</button>
+        <button class="bouton" type="button" data-sol="plate">Terre plate</button>
+      </div>
+      <svg viewBox="0 0 500 250" id="dessin-eratosthene">
+        <rect width="500" height="250" fill="#f2f8fd"/>
+        <g stroke="#e0a800" stroke-width="2" stroke-dasharray="8 6">
+          <path d="M40 0 V250 M110 0 V250 M180 0 V250 M250 0 V250 M320 0 V250 M390 0 V250 M460 0 V250"/>
+        </g>
+        <circle cx="470" cy="22" r="16" fill="#f7c948" stroke="#c98a00" stroke-width="2"/>
+        <text x="300" y="30" font-size="18" fill="#c98a00">rayons du Soleil ↓</text>
+        <g id="sol-rond">
+          <circle cx="250" cy="700" r="560" fill="#d9b86a" stroke="#8a6a2a" stroke-width="2"/>
+          <path d="M250 140 V98" stroke="#222" stroke-width="4"/>
+          <path d="M58.5 173.8 L44.8 136.2" stroke="#222" stroke-width="4"/>
+          <path d="M58.5 173.8 L44.8 179" stroke="#5a2a1a" stroke-width="6" stroke-linecap="round"/>
+          <path d="M51 155 A20 20 0 0 1 44.8 150" stroke="#c8302b" stroke-width="2" fill="none"/>
+          <path d="M58.5 173.8 V112" stroke="#c8302b" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <text x="262" y="118" font-size="19" fill="#222">Syène : pas d’ombre</text>
+          <text x="10" y="100" font-size="19" fill="#222">Alexandrie : une ombre !</text>
+          <text x="64" y="150" font-size="16" fill="#c8302b">7,2°</text>
+          <path d="M53 160 A575 575 0 0 1 250 125" stroke="#1f3a93" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+          <text x="122" y="128" font-size="18" fill="#1f3a93">≈ 800 km</text>
+          <text x="290" y="240" font-size="16" fill="#555">(angle exagéré pour qu’on le voie)</text>
+        </g>
+        <g id="sol-plat" style="display:none">
+          <rect x="0" y="180" width="500" height="70" fill="#d9b86a"/>
+          <path d="M0 180 H500" stroke="#8a6a2a" stroke-width="2"/>
+          <path d="M250 180 V138" stroke="#222" stroke-width="4"/>
+          <path d="M70 180 V138" stroke="#222" stroke-width="4"/>
+          <text x="248" y="128" font-size="19" fill="#222" text-anchor="middle">Syène : pas d’ombre</text>
+          <text x="20" y="128" font-size="19" fill="#222">Alexandrie : pas d’ombre non plus</text>
+          <text x="150" y="225" font-size="21" fill="#c8302b">… or il y en a une. Problème.</text>
+        </g>
+      </svg>
+      <p class="verdict-labo" id="verdict-erato"></p>
+      <p>Ératosthène fait le calcul. Change les valeurs si tu veux vérifier&nbsp;:</p>
+      <p class="calcul">
+        Angle de l’ombre&nbsp;: <input type="number" id="erato-angle" value="7.2" step="0.1" min="0.1"> °
+        &nbsp;·&nbsp; Distance Alexandrie-Syène&nbsp;: <input type="number" id="erato-dist" value="800" step="10" min="1"> km
+        <br>Tour de la Terre ≈ 360 ÷ angle × distance = <output id="erato-resultat">40 000 km</output>
+      </p>
+      <p>
+        Le vrai chiffre&nbsp;: <strong>40&nbsp;075 km</strong>. Avec un bâton, des pieds et beaucoup de patience,
+        il y a 2&nbsp;200 ans. Pas mal pour un monde « plat ».
+      </p>
+      <div class="postit vert" style="max-width:560px">
+        <span class="main">La réponse des platistes</span>
+        « Le Soleil est tout près, à 5&nbsp;000 km, donc les rayons ne sont pas parallèles&nbsp;! » Bien tenté.
+        Sauf que si on fait la même mesure depuis trois villes au lieu de deux, on trouve trois distances du Soleil
+        différentes. Avec une Terre ronde et un Soleil lointain, tout colle. À chaque fois.
+      </div>
+    </div>
+
+    <div class="labo" id="avions">
+      <h3>D. Le vol Sydney-Santiago, cauchemar des platistes</h3>
+      <p>
+        Il existe des vols directs entre Sydney (Australie) et Santiago (Chili). Ils durent entre 12 et 14 heures
+        selon le sens et le vent. Regarde ce que ça donne sur chaque carte.
+      </p>
+      <div class="commandes">
+        <button class="bouton actif" type="button" data-carte="globe">Sur un globe</button>
+        <button class="bouton" type="button" data-carte="plate">Sur la carte plate</button>
+      </div>
+      <div class="deux-colonnes">
+        <svg viewBox="0 0 300 300" id="carte-vol">
+          <g id="vol-globe">
+            <circle cx="150" cy="150" r="125" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+            <path d="M120 140 q30 -20 60 0 q10 30 -30 35 q-40 -5 -30 -35z" fill="#fff" stroke="#9ab"/>
+            <path d="M40 180 q20 -30 55 -20 q15 25 -10 45 q-35 5 -45 -25z" fill="#d9b86a" stroke="#8a6a2a"/>
+            <path d="M230 90 q20 20 15 70 q-10 30 -20 10 q-10 -40 5 -80z" fill="#8bbf6a" stroke="#3d6b2a"/>
+            <circle cx="88" cy="190" r="4" fill="#c8302b"/><circle cx="236" cy="150" r="4" fill="#c8302b"/>
+            <path d="M88 190 Q160 200 236 150" stroke="#c8302b" stroke-width="3" fill="none"/>
+            <text x="54" y="222" font-size="18" fill="#222">Sydney</text>
+            <text x="216" y="140" font-size="18" fill="#222">Santiago</text>
+            <text x="126" y="132" font-size="15" fill="#567">Antarctique</text>
+            <text x="10" y="290" font-size="17" fill="#1f3a93">(globe vu par en dessous)</text>
+          </g>
+          <g id="vol-plate" style="display:none">
+            <circle cx="150" cy="150" r="140" fill="#79b0e0" stroke="#1f3a93" stroke-width="2"/>
+            <circle cx="150" cy="150" r="133" fill="none" stroke="#fff" stroke-width="12"/>
+            <path d="M130 120 q30 -30 60 -5 q10 25 -20 35 q-40 0 -40 -30z" fill="#8bbf6a" stroke="#3d6b2a"/>
+            <path d="M60 110 q30 20 30 70 q-20 30 -35 -10z" fill="#8bbf6a" stroke="#3d6b2a"/>
+            <path d="M205 200 q35 0 45 30 q-20 20 -45 0z" fill="#d9b86a" stroke="#8a6a2a"/>
+            <circle cx="150" cy="150" r="3" fill="#222"/>
+            <circle cx="232" cy="222" r="4" fill="#c8302b"/><circle cx="68" cy="188" r="4" fill="#c8302b"/>
+            <path d="M232 222 L68 188" stroke="#c8302b" stroke-width="3" stroke-dasharray="7 4"/>
+            <text x="222" y="250" font-size="18" fill="#222">Sydney</text>
+            <text x="30" y="214" font-size="18" fill="#222">Santiago</text>
+          </g>
+        </svg>
+        <div>
+          <p class="main" id="texte-vol-titre">Sur un globe&nbsp;: environ 11&nbsp;300 km</p>
+          <p id="texte-vol"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- dialogue -->
+  <section id="dialogue">
+    <h2><span class="num">4.</span>Le dialogue</h2>
+    <p>
+      Une vraie conversation entre <strong class="nom-conspi">Adam</strong> (conspirationniste convaincu)
+      et <strong class="nom-decodeur">AdamClone</strong> (décodeur patient). Les prénoms changent si tu modifies
+      les rôles tout en haut.
+    </p>
+    <div class="dialogue" id="fil-dialogue" aria-live="polite"></div>
+    <div class="commandes">
+      <button class="bouton" type="button" id="replique-suivante">Réplique suivante</button>
+      <button class="bouton" type="button" id="tout-afficher">Tout afficher</button>
+      <button class="bouton" type="button" id="recommencer">Recommencer</button>
+    </div>
+  </section>
+
+
+  <!-- pourquoi on y croit -->
+  <section id="pourquoi">
+    <h2><span class="num">5.</span>Mais alors, pourquoi des gens y croient&nbsp;?</h2>
+    <p>
+      Les platistes ne sont pas « bêtes ». Beaucoup sont curieux et passent des heures à « faire leurs recherches ».
+      Le souci, c’est la façon de chercher. Quelques mécanismes qui piègent tout le monde, nous compris&nbsp;:
+    </p>
+
+    <div class="raisons">
+      <div class="raison">
+        <svg viewBox="0 0 170 70"><circle cx="40" cy="35" r="22" fill="none" stroke="#222" stroke-width="3"/><path d="M56 51 l22 16" stroke="#222" stroke-width="5" stroke-linecap="round"/><path d="M30 35 l7 7 l12 -14" stroke="#2f7d4f" stroke-width="3" fill="none"/><text x="74" y="30" font-size="16" fill="#c8302b">que ce</text><text x="74" y="46" font-size="16" fill="#c8302b">qui m’arrange</text></svg>
+        <h3>Le biais de confirmation</h3>
+        <p>On retient ce qui va dans notre sens, on oublie le reste. Une vidéo « pour » vaut dix preuves « contre ».</p>
+      </div>
+      <div class="raison">
+        <svg viewBox="0 0 120 70"><rect x="20" y="12" width="70" height="46" rx="6" fill="#c8302b"/><path d="M48 24 v22 l18 -11z" fill="#fff"/><text x="94" y="20" font-size="16" fill="#222">+1</text><text x="96" y="38" font-size="16" fill="#222">+1</text><text x="94" y="56" font-size="16" fill="#222">+1</text></svg>
+        <h3>L’algorithme</h3>
+        <p>Regarde une vidéo platiste par curiosité. YouTube t’en propose dix autres. Au bout d’un moment, on a l’impression que « tout le monde en parle ».</p>
+      </div>
+      <div class="raison">
+        <svg viewBox="0 0 120 70"><use href="#bonhomme" transform="translate(60 60) scale(2)"/><path d="M44 12 l4 -10 l4 8 l6 -10 l4 10 l4 -8 l4 10z" fill="#f7c948" stroke="#c98a00"/></svg>
+        <h3>Se sentir plus malin</h3>
+        <p>« Moi, je sais ce que les autres ignorent. » C’est flatteur. Et quand on pense avoir percé un secret, on n’a pas envie de lâcher.</p>
+      </div>
+      <div class="raison">
+        <svg viewBox="0 0 120 70"><use href="#bonhomme" transform="translate(30 60) scale(1.6)"/><use href="#bonhomme" transform="translate(60 60) scale(1.6)"/><use href="#bonhomme" transform="translate(90 60) scale(1.6)"/><path d="M20 14 q40 -14 80 0" stroke="#2f7d4f" stroke-width="2" fill="none"/></svg>
+        <h3>La communauté</h3>
+        <p>On se fait des amis, on va à des conventions. Changer d’avis, ce serait perdre tout ça. Ça pèse lourd, bien plus qu’un argument scientifique.</p>
+      </div>
+      <div class="raison">
+        <svg viewBox="0 0 120 70"><rect x="30" y="22" width="60" height="40" fill="#ddd" stroke="#222" stroke-width="2"/><path d="M26 22 L60 6 L94 22" fill="#bbb" stroke="#222" stroke-width="2"/><path d="M40 30 v26 M54 30 v26 M68 30 v26 M80 30 v26" stroke="#222" stroke-width="2"/><text x="2" y="66" font-size="22" fill="#c8302b">?</text><text x="102" y="20" font-size="22" fill="#c8302b">?</text></svg>
+        <h3>La méfiance</h3>
+        <p>Les institutions ont parfois menti (c’est vrai, et c’est documenté). Du coup, certains en concluent qu’elles mentent sur tout. Le saut est énorme.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:30px">La méthode du décodeur</h3>
+    <p>La prochaine fois qu’une vidéo t’explique « la vérité qu’on te cache », coche ces questions dans ta tête&nbsp;:</p>
+    <ul class="liste-verif" id="liste-verif">
+      <li><label><input type="checkbox"><span><strong>Qui parle&nbsp;?</strong> Un spécialiste du sujet, ou quelqu’un qui vend des t-shirts&nbsp;?</span></label></li>
+      <li><label><input type="checkbox"><span><strong>Est-ce que je peux vérifier moi-même&nbsp;?</strong> Un bâton et une ombre, c’est à la portée de tout le monde.</span></label></li>
+      <li><label><input type="checkbox"><span><strong>Combien de gens devraient garder le secret&nbsp;?</strong> La NASA seule, c’est environ 18&nbsp;000 personnes. Plus tous les pilotes, marins et astronomes du monde. Depuis 2&nbsp;000 ans.</span></label></li>
+      <li><label><input type="checkbox"><span><strong>La théorie explique-t-elle tout, même ce qui la contredit&nbsp;?</strong> « Il n’y a pas de preuve&nbsp;? C’est bien la preuve qu’ils cachent tout&nbsp;! » Si rien ne peut la réfuter, c’est mauvais signe.</span></label></li>
+      <li><label><input type="checkbox"><span><strong>D’autres sources sérieuses disent-elles pareil&nbsp;?</strong> Pas d’autres vidéos de la même chaîne. Des sources indépendantes.</span></label></li>
+      <li><label><input type="checkbox"><span><strong>Est-ce que j’ai envie d’y croire&nbsp;?</strong> Une histoire excitante n’est pas une histoire vraie.</span></label></li>
+    </ul>
+    <div class="jauge" aria-hidden="true"><div id="jauge-verif"></div></div>
+    <p class="annotation" id="texte-verif">Détecteur à complot&nbsp;: éteint.</p>
+
+    <div class="postit" style="max-width:600px;margin-top:20px">
+      <span class="main">Le calcul qui tue</span>
+      En 2016, le physicien David Grimes a estimé combien de temps un secret peut tenir selon le nombre de gens au courant.
+      Avec des centaines de milliers de personnes dans la confidence, ça fuite en quelques années.
+      La Terre ronde est « cachée » depuis l’Antiquité. Soit c’est le complot le mieux organisé de l’histoire,
+      soit ce n’est pas un complot.
+    </div>
+  </section>
+
+
+  <!-- quiz -->
+  <section id="quiz">
+    <h2><span class="num">6.</span>Es-tu un bon décodeur&nbsp;?</h2>
+    <p>Cinq questions. Pas de piège. Enfin, un seul.</p>
+    <div id="questions"></div>
+    <div class="resultat-quiz" id="resultat-quiz"></div>
+  </section>
+
+
+  <section>
+    <h2><span class="num">7.</span>Ce qu’on retient</h2>
+    <p>
+      La Terre est ronde, et on le sait depuis plus de 2&nbsp;000 ans, bien avant les fusées.
+      Les arguments platistes ont presque tous une réponse simple, souvent vérifiable avec un bâton,
+      une éclipse ou un billet d’avion.
+    </p>
+    <p>
+      Mais le plus intéressant, ce n’est pas la forme de la Terre. C’est la méthode&nbsp;:
+      <span class="fluo">se demander d’où vient une info, chercher ce qui pourrait la contredire,
+      et accepter de changer d’avis.</span> Ça marche pour la Terre plate, et pour à peu près tout le reste.
+    </p>
+
+    <h3 style="margin-top:30px">Nos sources</h3>
+    <ul class="sources">
+      <li>Ératosthène et la mesure de la circonférence terrestre (vers 240 av. J.-C.), manuels de physique et de SVT.</li>
+      <li>Aristote, <em>Du ciel</em>, livre II&nbsp;: l’argument de l’ombre ronde pendant les éclipses de Lune.</li>
+      <li>Alfred Russel Wallace et l’expérience du canal de Bedford (1870).</li>
+      <li><em>Behind the Curve</em>, documentaire de Daniel J. Clark (2018), pour l’épisode du gyroscope.</li>
+      <li>D. R. Grimes, « On the Viability of Conspiratorial Beliefs », <em>PLOS ONE</em>, 2016.</li>
+      <li>Sondage YouGov (2017) sur la croyance en une Terre plate aux États-Unis.</li>
+      <li>Vidéo de la consigne&nbsp;: hachette-clic.fr/23emc1014.</li>
+    </ul>
+  </section>
+</main>
+
+
+<script>
+// prénoms
+let inputConspi = document.getElementById("nom-conspi");
+let inputDecodeur = document.getElementById("nom-decodeur");
+
+try {
+  inputConspi.value = localStorage.getItem("nom-conspi") || "";
+  inputDecodeur.value = localStorage.getItem("nom-decodeur") || "";
+} catch (e) {}
+
+function getConspi() {
+  if (inputConspi.value.trim() == "") return "Adam";
+  return inputConspi.value.trim();
+}
+function getDecodeur() {
+  if (inputDecodeur.value.trim() == "") return "AdamClone";
+  return inputDecodeur.value.trim();
+}
+
+function updateNoms() {
+  let a = document.querySelectorAll(".nom-conspi, .bulle.c .nom");
+  for (let i = 0; i < a.length; i++) a[i].textContent = getConspi();
+  let b = document.querySelectorAll(".nom-decodeur, .bulle.d .nom");
+  for (let i = 0; i < b.length; i++) b[i].textContent = getDecodeur();
+}
+
+inputConspi.addEventListener("input", function() {
+  try { localStorage.setItem("nom-conspi", inputConspi.value); } catch (e) {}
+  updateNoms();
+});
+inputDecodeur.addEventListener("input", function() {
+  try { localStorage.setItem("nom-decodeur", inputDecodeur.value); } catch (e) {}
+  updateNoms();
+});
+updateNoms();
+
+
+// cartes du match
+let cartes = document.querySelectorAll(".carte");
+let nbVues = 0;
+let phrases = [
+  "Coup d’envoi. Pour l’instant, personne n’a rien prouvé.",
+  "Premier point. La physique ouvre le score.",
+  "Ça commence à sentir mauvais pour le disque.",
+  "À la mi-temps, le globe mène.",
+  "Le public quitte les tribunes (côté platiste).",
+  "Plus qu’un argument, et c’est plié.",
+  "Match plié. Six arguments, six réponses."
+];
+
+for (let i = 0; i < cartes.length; i++) {
+  cartes[i].addEventListener("click", function(e) {
+    if (e.target.tagName == "A") return; // le lien du labo retournait la carte
+    this.classList.toggle("retournee");
+    if (!this.classList.contains("vue")) {
+      this.classList.add("vue");
+      nbVues++;
+    }
+    document.getElementById("score-d").textContent = nbVues;
+    document.getElementById("score-c").textContent = cartes.length - nbVues;
+    document.getElementById("commentaire-match").textContent = phrases[nbVues];
+    if (nbVues == cartes.length) {
+      document.getElementById("tampon").classList.add("visible");
+    }
+  });
+}
+
+
+// labo A : bateau
+let forme = "ronde";
+let zoom = false;
+let R = 950;
+let angleObs = -16;
+let hauteurOeil = 26; // en vrai c'est beaucoup moins mais sinon on voit rien
+
+function point(angle, h) {
+  let a = angle * Math.PI / 180;
+  return [300 + (R + h) * Math.sin(a), 1050 - (R + h) * Math.cos(a)];
+}
+
+function bateau() {
+  let d = document.getElementById("distance-bateau").value / 100;
+  let obs = document.getElementById("observateur");
+  let bat = document.getElementById("bateau-cote");
+
+  if (forme == "ronde") {
+    document.getElementById("cote-ronde").style.display = "";
+    document.getElementById("cote-plate").style.display = "none";
+
+    let angleBat = angleObs + 4 + d * 30;
+    let p1 = point(angleObs, 0);
+    let p2 = point(angleBat, 0);
+    obs.setAttribute("transform", "translate(" + p1[0] + " " + p1[1] + ") rotate(" + angleObs + ")");
+    bat.setAttribute("transform", "translate(" + p2[0] + " " + p2[1] + ") rotate(" + angleBat + ")");
+
+    // ligne de vue = tangente au cercle qui part de l'oeil
+    let oeil = point(angleObs, hauteurOeil);
+    let angleT = angleObs + Math.acos(R / (R + hauteurOeil)) * 180 / Math.PI;
+    let t = point(angleT, 0);
+    let ligne = document.getElementById("ligne-vue");
+    ligne.setAttribute("x1", oeil[0]);
+    ligne.setAttribute("y1", oeil[1]);
+    ligne.setAttribute("x2", oeil[0] + (t[0] - oeil[0]) * 5);
+    ligne.setAttribute("y2", oeil[1] + (t[1] - oeil[1]) * 5);
+  } else {
+    document.getElementById("cote-ronde").style.display = "none";
+    document.getElementById("cote-plate").style.display = "";
+    obs.setAttribute("transform", "translate(70 100)");
+    bat.setAttribute("transform", "translate(" + (120 + d * 440) + " 100)");
+  }
+
+  let taille = 1.7 - d * 1.35;
+  if (zoom) taille = taille * 2.6;
+
+  let cache = 0;
+  if (forme == "ronde") {
+    cache = (d - 0.3) / 0.6;
+    if (cache < 0) cache = 0;
+    if (cache > 1.15) cache = 1.15;
+  }
+  let y = 150 + cache * 64 * taille;
+  document.getElementById("bateau-oeil").setAttribute("transform", "translate(200 " + y + ") scale(" + taille + ")");
+
+  let rond = document.getElementById("cache-longue-vue");
+  if (zoom) {
+    rond.setAttribute("stroke-width", 340);
+    rond.setAttribute("r", 290);
+  } else {
+    rond.setAttribute("stroke-width", 0);
+  }
+
+  let txt = "";
+  if (forme == "ronde") {
+    if (cache == 0) txt = "Le bateau est entier. Normal, il est encore proche.";
+    else if (cache < 0.3) txt = "La coque commence à disparaître. Pas les voiles. Intéressant…";
+    else if (cache < 1) txt = "La coque a disparu, on ne voit plus que les voiles. Le bateau « descend » derrière la courbe.";
+    else txt = "Plus rien, à part peut-être le haut du mât. Le bateau est derrière la bosse de la Terre.";
+    if (zoom && cache > 0.2) txt += " Et la longue-vue n’y change rien : on ne voit pas à travers l’eau.";
+  } else if (d < 0.7) {
+    txt = "Sur une Terre plate, le bateau rapetisse, c’est tout. Il reste entier jusqu’au bout.";
+  } else {
+    txt = "Il est minuscule mais entier. Avec la longue-vue, on le reverrait en entier. Dans la vraie vie, ça n’arrive jamais.";
+  }
+  document.getElementById("verdict-bateau").textContent = txt;
+}
+
+let btnsForme = document.querySelectorAll("#horizon [data-forme]");
+for (let i = 0; i < btnsForme.length; i++) {
+  btnsForme[i].onclick = function() {
+    forme = this.dataset.forme;
+    for (let j = 0; j < btnsForme.length; j++) btnsForme[j].classList.remove("actif");
+    this.classList.add("actif");
+    bateau();
+  };
+}
+
+document.getElementById("longue-vue").onclick = function() {
+  zoom = !zoom;
+  if (zoom) this.textContent = "Longue-vue : oui";
+  else this.textContent = "Longue-vue : non";
+  this.classList.toggle("actif");
+  bateau();
+};
+document.getElementById("distance-bateau").oninput = bateau;
+bateau();
+
+
+// labo B : eclipse
+function eclipse() {
+  let angle = document.getElementById("angle-eclipse").value;
+  document.getElementById("angle-eclipse-val").textContent = angle + "°";
+
+  // disque vu de biais -> la largeur fait cos(angle)
+  let rx = 92 * Math.cos(angle * Math.PI / 180);
+  if (rx < 3) rx = 3;
+  let ombre = document.getElementById("ombre-disque");
+  ombre.setAttribute("rx", rx);
+  ombre.setAttribute("cx", 40 + (92 - rx) * 0.75);
+
+  let txt;
+  if (angle < 15) txt = "Vu de face, les deux ombres se ressemblent. Pour l’instant, match nul.";
+  else if (angle < 60) txt = "L’ombre du disque devient ovale. Celle de la boule ? Toujours ronde.";
+  else txt = "Le disque ne fait presque plus qu’un trait. Aucune éclipse de toute l’histoire n’a jamais montré ça.";
+  document.getElementById("verdict-eclipse").textContent = txt;
+}
+document.getElementById("angle-eclipse").oninput = eclipse;
+eclipse();
+
+
+// labo C : eratosthene
+let btnsSol = document.querySelectorAll("#eratosthene [data-sol]");
+for (let i = 0; i < btnsSol.length; i++) {
+  btnsSol[i].onclick = function() {
+    for (let j = 0; j < btnsSol.length; j++) btnsSol[j].classList.remove("actif");
+    this.classList.add("actif");
+    if (this.dataset.sol == "ronde") {
+      document.getElementById("sol-rond").style.display = "";
+      document.getElementById("sol-plat").style.display = "none";
+      document.getElementById("verdict-erato").textContent = "Le sol est courbé, donc les deux bâtons ne pointent pas dans la même direction. L’un fait une ombre, l’autre non. Exactement ce qu’on observe.";
+    } else {
+      document.getElementById("sol-rond").style.display = "none";
+      document.getElementById("sol-plat").style.display = "";
+      document.getElementById("verdict-erato").textContent = "Sol plat, rayons parallèles : les deux bâtons devraient avoir la même ombre. Ce n’est pas le cas. La Terre plate perd encore.";
+    }
+  };
+}
+btnsSol[0].click();
+
+function calcul() {
+  let angle = parseFloat(document.getElementById("erato-angle").value);
+  let dist = parseFloat(document.getElementById("erato-dist").value);
+  let res = document.getElementById("erato-resultat");
+  if (isNaN(angle) || isNaN(dist) || angle <= 0 || dist <= 0) {
+    res.textContent = "… il faut des nombres positifs";
+    return;
+  }
+  res.textContent = Math.round(360 / angle * dist).toLocaleString("fr-FR") + " km";
+}
+document.getElementById("erato-angle").oninput = calcul;
+document.getElementById("erato-dist").oninput = calcul;
+calcul();
+
+
+// labo D : avion
+// la distance plate je l'ai calculée sur la carte des platistes avec les vraies coordonnées (~25 600 km)
+function vol(type) {
+  let btns = document.querySelectorAll("#avions [data-carte]");
+  for (let i = 0; i < btns.length; i++) {
+    if (btns[i].dataset.carte == type) btns[i].classList.add("actif");
+    else btns[i].classList.remove("actif");
+  }
+  if (type == "globe") {
+    document.getElementById("vol-globe").style.display = "";
+    document.getElementById("vol-plate").style.display = "none";
+    document.getElementById("texte-vol-titre").textContent = "Sur un globe : environ 11 300 km";
+    document.getElementById("texte-vol").textContent = "À 900 km/h, ça fait un peu plus de 12 heures. Pile la durée du vrai vol. L’avion passe au-dessus de l’océan Austral, pas loin de l’Antarctique, et tout est normal.";
+  } else {
+    document.getElementById("vol-globe").style.display = "none";
+    document.getElementById("vol-plate").style.display = "";
+    document.getElementById("texte-vol-titre").textContent = "Sur la carte plate : environ 25 600 km";
+    document.getElementById("texte-vol").textContent = "Plus du double ! Il faudrait 28 heures de vol, ou un avion qui va à 2 000 km/h sans que personne ne le remarque. Et ces vols existent, des milliers de passagers les prennent chaque année. Soit la carte est fausse, soit tous ces passagers sont dans le complot.";
+  }
+}
+document.querySelector("[data-carte='globe']").onclick = function() { vol("globe"); };
+document.querySelector("[data-carte='plate']").onclick = function() { vol("plate"); };
+vol("globe");
+
+
+// dialogue
+// c = conspi, d = decodeur
+let dialogue = [
+  ["c", "Franchement, t’as déjà vu la courbure de la Terre, toi ? De tes propres yeux ?"],
+  ["d", "Non. J’ai jamais vu mon cerveau non plus, et pourtant je m’en sers. Enfin, j’essaie."],
+  ["c", "Très drôle. Mais si la Terre était une boule, l’eau tomberait par en dessous."],
+  ["d", "Tomber vers où ? Le « bas », c’est le centre de la Terre. La gravité tire tout vers le milieu, que tu sois à Lille ou à Sydney."],
+  ["c", "La gravité, la gravité… c’est ce qu’ils disent."],
+  ["d", "Lâche ton téléphone pour voir. … Voilà. Il est tombé. On recommence ?"],
+  ["c", "Et les avions ? Pourquoi un Paris-Los Angeles passe par le Groenland ? Sur la carte, c’est un détour énorme."],
+  ["d", "Parce que ta carte est plate et que la Terre ne l’est pas. Sur un globe, c’est le chemin le plus court. Prends une ficelle et un ballon, tu verras."],
+  ["c", "D’accord, mais des gens ont vu un laser à des kilomètres au-dessus d’un lac. Sur une boule, il devrait disparaître."],
+  ["d", "L’air froid au-dessus de l’eau courbe la lumière. Quand Wallace a refait l’expérience proprement en 1870, il a trouvé la courbure. Il a même gagné un pari."],
+  ["c", "Ok. Mais les photos de la NASA, tout le monde sait qu’elles sont retouchées."],
+  ["d", "Oublie la NASA. Des lycéens envoient des ballons-sondes avec une GoPro à 30 km d’altitude. L’horizon est courbé. Pas besoin d’astronaute, juste d’hélium."],
+  ["c", "Hmm. Et pourquoi on ne sent pas la Terre tourner ?"],
+  ["d", "Pour la même raison que tu bois ton jus dans le TGV sans t’en mettre partout : la vitesse est constante. On sent les freinages, pas la vitesse."],
+  ["c", "Mais pourquoi on nous mentirait, d’abord ?"],
+  ["d", "Excellente question. Pose-la à ta théorie. Des milliers d’employés de la NASA, tous les pilotes, tous les marins, depuis 2 000 ans, et pas un seul n’aurait craqué ?"],
+  ["c", "… Bon. Je vais vérifier."],
+  ["d", "Parfait. C’est exactement ça, l’esprit critique. Vérifier. Même ce que je te dis."]
+];
+let n = 0;
+let fil = document.getElementById("fil-dialogue");
+let btnSuivant = document.getElementById("replique-suivante");
+
+function suivant() {
+  if (n >= dialogue.length) return;
+  let div = document.createElement("div");
+  div.className = "bulle " + dialogue[n][0];
+  let nom = document.createElement("span");
+  nom.className = "nom";
+  if (dialogue[n][0] == "c") nom.textContent = getConspi();
+  else nom.textContent = getDecodeur();
+  div.appendChild(nom);
+  div.appendChild(document.createTextNode(dialogue[n][1]));
+  fil.appendChild(div);
+  n++;
+
+  if (n == dialogue.length) {
+    btnSuivant.disabled = true;
+    btnSuivant.textContent = "Fin";
+  } else {
+    btnSuivant.disabled = false;
+    btnSuivant.textContent = "Réplique suivante";
+  }
+}
+
+btnSuivant.onclick = suivant;
+document.getElementById("tout-afficher").onclick = function() {
+  while (n < dialogue.length) suivant();
+};
+document.getElementById("recommencer").onclick = function() {
+  fil.innerHTML = "";
+  n = 0;
+  suivant();
+};
+suivant();
+
+
+// checklist
+let cases = document.querySelectorAll("#liste-verif input");
+let niveaux = [
+  "Détecteur à complot : éteint.",
+  "Détecteur à complot : il clignote un peu.",
+  "Détecteur à complot : ça chauffe.",
+  "Détecteur à complot : à moitié réveillé.",
+  "Détecteur à complot : bien réglé.",
+  "Détecteur à complot : presque infaillible.",
+  "Détecteur à complot : niveau Ératosthène. Bravo."
+];
+for (let i = 0; i < cases.length; i++) {
+  cases[i].onchange = function() {
+    let nb = 0;
+    for (let j = 0; j < cases.length; j++) {
+      if (cases[j].checked) nb++;
+    }
+    document.getElementById("jauge-verif").style.width = (nb / cases.length * 100) + "%";
+    document.getElementById("texte-verif").textContent = niveaux[nb];
+  };
+}
+
+
+// quiz
+let questions = [
+  {
+    q: "Qui a mesuré le tour de la Terre avec un bâton et une ombre ?",
+    rep: ["Ératosthène", "Napoléon", "Un influenceur en 2019"],
+    bonne: 0,
+    oui: "Exact. Vers 240 av. J.-C., et il tombe presque pile.",
+    non: "Raté. C’est Ératosthène, 2 000 ans avant Internet."
+  },
+  {
+    q: "Pendant une éclipse de Lune, l’ombre de la Terre est…",
+    rep: ["toujours ronde", "parfois un trait", "carrée le mardi"],
+    bonne: 0,
+    oui: "Oui ! Seule une boule fait une ombre ronde quel que soit l’angle.",
+    non: "Non : elle est toujours ronde. Un disque, lui, ferait parfois un trait."
+  },
+  {
+    q: "Pourquoi un bateau qui s’éloigne disparaît-il coque en premier ?",
+    rep: ["Il coule, mais discrètement", "La courbure de la Terre", "La brume du matin"],
+    bonne: 1,
+    oui: "Bien vu. Il passe derrière la « bosse » de la Terre.",
+    non: "Non, c’est la courbure. (Et rassure-toi, il ne coule pas.)"
+  },
+  {
+    q: "Pourquoi on ne sent pas la Terre tourner ?",
+    rep: ["Elle ne tourne pas", "On est trop lourds", "Sa vitesse est constante"],
+    bonne: 2,
+    oui: "Oui. Pas d’accélération, pas de sensation. Comme dans un TGV bien lancé.",
+    non: "Non. On ne sent que les changements de vitesse, et la Terre n’en fait pas."
+  },
+  {
+    q: "« Il n’y a aucune preuve du complot, c’est bien la preuve qu’ils cachent tout ! » Ce raisonnement est…",
+    rep: ["imparable", "infalsifiable : rien ne peut le contredire", "validé par la NASA"],
+    bonne: 1,
+    oui: "Exactement. Une théorie que rien ne peut contredire n’explique rien. C’était le piège.",
+    non: "Raté, c’était le piège ! Ce raisonnement marche pour n’importe quelle idée, donc il ne prouve rien."
+  }
+];
+
+let repondu = 0;
+let score = 0;
+let zoneQuiz = document.getElementById("questions");
+
+for (let i = 0; i < questions.length; i++) {
+  let div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = "<p class='intitule'>" + (i + 1) + ". " + questions[i].q + "</p><div class='choix'></div><p class='retour'></p>";
+  let choix = div.querySelector(".choix");
+
+  for (let j = 0; j < questions[i].rep.length; j++) {
+    let btn = document.createElement("button");
+    btn.className = "bouton";
+    btn.textContent = questions[i].rep[j];
+    btn.onclick = function() {
+      let tous = choix.querySelectorAll("button");
+      for (let k = 0; k < tous.length; k++) tous[k].disabled = true;
+      tous[questions[i].bonne].classList.add("bon");
+
+      let retour = div.querySelector(".retour");
+      if (j == questions[i].bonne) {
+        score++;
+        retour.textContent = questions[i].oui;
+        retour.style.color = "#2b8a3e";
+      } else {
+        btn.classList.add("faux");
+        retour.textContent = questions[i].non;
+        retour.style.color = "#c92a2a";
+      }
+      repondu++;
+      if (repondu == questions.length) resultat();
+    };
+    choix.appendChild(btn);
+  }
+  zoneQuiz.appendChild(div);
+}
+
+function resultat() {
+  let r = document.getElementById("resultat-quiz");
+  if (score == 5) r.textContent = "5/5. Décodeur certifié. La NASA veut ton CV (ou alors c’est un piège).";
+  else if (score >= 3) r.textContent = score + "/5. Très bon esprit critique. Encore un petit effort et tu deviens insupportable en soirée.";
+  else r.textContent = score + "/5. Hmm. Relis le labo, plante un bâton dans le jardin, et reviens.";
+  r.style.display = "block";
+}
+</script>
+</body>
+</html>
